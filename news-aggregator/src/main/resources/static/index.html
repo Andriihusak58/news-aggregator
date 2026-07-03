@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Aggregator</title>
+    <style>
+        body {
+            font-family: -apple-system, Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #222;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 { text-align: center; color: #1a1a1a; }
+        #search-box {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+        .news-card {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .news-card h2 { margin-top: 0; font-size: 1.2em; color: #1a1a1a; }
+        .news-card p { color: #444; line-height: 1.6; }
+        .news-card a {
+            display: inline-block;
+            margin-top: 10px;
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .news-card a:hover { text-decoration: underline; }
+        .pagination { text-align: center; margin: 20px 0; }
+        .pagination button {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 8px 14px;
+            margin: 0 3px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .pagination button:hover { background-color: #e8e8e8; }
+        .pagination button.active {
+            background-color: #0066cc;
+            color: #fff;
+            border-color: #0066cc;
+        }
+    </style>
+</head>
+<body>
+<h1>Meine Nachrichten</h1>
+
+<input type="text" id="search-box" placeholder="Nachrichten durchsuchen..." oninput="handleSearch()">
+
+<div id="news-container">Lade Nachrichten...</div>
+<div id="pagination" class="pagination"></div>
+
+<script>
+    let allNews = [];
+    let filteredNews = [];
+    let currentPage = 1;
+    const pageSize = 20;
+
+    fetch('/api/news')
+        .then(response => response.json())
+        .then(newsList => {
+            allNews = newsList;
+            filteredNews = allNews;
+            renderPage(1);
+        });
+
+    function handleSearch() {
+        const query = document.getElementById('search-box').value.toLowerCase();
+        filteredNews = allNews.filter(news =>
+            news.title.toLowerCase().includes(query) ||
+            news.summary.toLowerCase().includes(query)
+        );
+        renderPage(1);
+    }
+
+    function renderPage(page) {
+        currentPage = page;
+        const container = document.getElementById('news-container');
+        container.innerHTML = '';
+
+        const start = (page - 1) * pageSize;
+        const end = start + pageSize;
+        const pageNews = filteredNews.slice(start, end);
+
+        pageNews.forEach(news => {
+            const div = document.createElement('div');
+            div.className = 'news-card';
+            div.innerHTML =
+                '<h2>' + news.title + '</h2>' +
+                '<p>' + news.summary + '</p>' +
+                '<a href="' + news.link + '" target="_blank">Zum Artikel →</a>';
+            container.appendChild(div);
+        });
+
+        window.scrollTo(0, 0);
+        renderPagination();
+    }
+
+    function renderPagination() {
+        const totalPages = Math.ceil(filteredNews.length / pageSize);
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement('button');
+            btn.textContent = i;
+            if (i === currentPage) btn.className = 'active';
+            btn.onclick = () => renderPage(i);
+            pagination.appendChild(btn);
+        }
+    }
+</script>
+</body>
+</html>
