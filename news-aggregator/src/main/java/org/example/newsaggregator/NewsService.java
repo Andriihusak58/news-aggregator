@@ -9,7 +9,9 @@ import java.util.List;
 @Service
 public class NewsService {
 
-    private static final String DB_URL = "jdbc:sqlite:news.db";
+    private static final String DB_URL = System.getenv("DATABASE_URL");
+    private static final String DB_USER = System.getenv("DATABASE_USER");
+    private static final String DB_PASSWORD = System.getenv("DATABASE_PASSWORD");
 
     @Scheduled(fixedRate = 3600000)
     public void scheduledUpdate(){
@@ -27,17 +29,18 @@ public class NewsService {
 
         try{
 
-            Connection connection = DriverManager.getConnection(DB_URL);
+            Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
             System.out.println("Connect!");
 
             String sql = "CREATE TABLE IF NOT EXISTS news ("
-                    + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + "id SERIAL PRIMARY KEY, "
                     + "title TEXT, "
                     + "description TEXT, "
                     + "link TEXT UNIQUE, "
                     + "pub_date TEXT, "
-                    +"summary TEXT"
-                    +")";
+                    + "published_at TIMESTAMP, "
+                    + "summary TEXT"
+                    + ")";
 
             Statement statement = connection.createStatement();
             statement.execute(sql);
@@ -61,9 +64,9 @@ public class NewsService {
     public List<NewsItem> getNews() {
         List<NewsItem> newsList = new ArrayList<>();
         try {
-            Connection connection = DriverManager.getConnection(DB_URL);
+            Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
 
-            String sql = "SELECT title, description, link, pub_date, summary FROM news WHERE summary IS NOT NULL ORDER BY id DESC LIMIT 140";
+            String sql = "SELECT title, description, link, pub_date, summary FROM news WHERE summary IS NOT NULL ORDER BY published_at DESC LIMIT 140";
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql);
 

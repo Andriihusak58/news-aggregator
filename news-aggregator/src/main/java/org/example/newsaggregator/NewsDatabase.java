@@ -3,24 +3,30 @@ package org.example.newsaggregator;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.sql.Timestamp;
 
 public class NewsDatabase {
 
-    private static final String DB_URL = "jdbc:sqlite:news.db";
+    private static final String DB_URL = System.getenv("DATABASE_URL");
+    private static final String DB_USER = System.getenv("DATABASE_USER");
+    private static final String DB_PASSWORD = System.getenv("DATABASE_PASSWORD");
 
     public static void main(String[] args) {
 
         try{
-            Connection connection = DriverManager.getConnection(DB_URL);
+            Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
             System.out.println("Connect!");
 
 
             String sql = "CREATE TABLE IF NOT EXISTS news ("
-                    + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + "id SERIAL PRIMARY KEY, "
                     + "title TEXT, "
                     + "description TEXT,"
                     + "link TEXT UNIQUE, "
-                    + "pub_date TEXT,"
+                    + "pub_date TEXT, "
+                    + "published_at TIMESTAMP, "
                     + "summary TEXT"
                     + ")";
 
@@ -49,13 +55,25 @@ public class NewsDatabase {
         }
     }
 
-    public static void insertNews (Connection connection, NewsItem news) throws SQLException{
-        String sql = "INSERT OR IGNORE INTO news (title,description, link, pub_date) VALUES (?, ?, ?, ?)";
+
+
+    public static void insertNews(Connection connection, NewsItem news) throws SQLException {
+        String sql = "INSERT INTO news (title, description, link, pub_date, published_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT (link) DO NOTHING";
         PreparedStatement pstmt = connection.prepareStatement(sql);
         pstmt.setString(1, news.getTitle());
         pstmt.setString(2, news.getDescription());
         pstmt.setString(3, news.getLink());
         pstmt.setString(4, news.getPubDate());
+
+        // Парсимо текстову дату в справжню
+        try {
+            OffsetDateTime date = OffsetDateTime.parse(news.getPubDate(), DateTimeFormatter.RFC_1123_DATE_TIME);
+            pstmt.setTimestamp(5, Timestamp.from(date.toInstant()));
+        } catch (Exception e) {
+            System.out.println("Не вдалося розпарсити дату: " + news.getPubDate());
+            pstmt.setTimestamp(5, null);
+        }
+
         pstmt.executeUpdate();
     }
 
