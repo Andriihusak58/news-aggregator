@@ -17,10 +17,22 @@ public class AiSummarizer {
         try {
             String apiKey = System.getenv("ANTHROPIC_API_KEY");
 
-            String prompt = "Fasse diese Nachricht in maximal 35 Wörtern zusammen. "
-                    + "Schreibe in einfachem Deutsch auf B1-Niveau. "
-                    + "Nenne nur die eine wichtigste Tatsache. "
-                    + "Antworte ohne Überschrift und ohne Formatierung, nur mit dem Zusammenfassungstext: " + textToSummarize;
+            String prompt =
+                    """
+                    Du bist ein neutraler Nachrichtenredakteur.
+                
+                    Erstelle eine Zusammenfassung mit höchstens 35 Wörtern.
+                
+                    Regeln:
+                    - Verwende nur Informationen aus dem Text.
+                    - Erfinde nichts.
+                    - Keine Wertungen oder eigene Meinungen.
+                    - Bei Kommentaren oder Analysen müssen Meinungen als solche gekennzeichnet werden.
+                    - Schreibe in einfachem Deutsch (B1).
+                    - Gib nur den Zusammenfassungstext zurück.
+                
+                    Text:
+                    """ + textToSummarize;
 
             ObjectMapper mapper = new ObjectMapper();
 
