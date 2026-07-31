@@ -9,14 +9,18 @@ import java.nio.charset.StandardCharsets;
 
 public class TelegramSender {
 
-    public static void sendMessage(String text, String chatId) {
+    public static void sendMessage(String text, String chatId, String threadId) {
         try {
             String token = System.getenv("TELEGRAM_BOT_TOKEN");
-
             String encodedText = URLEncoder.encode(text, StandardCharsets.UTF_8);
+
             String url = "https://api.telegram.org/bot" + token
                     + "/sendMessage?chat_id=" + chatId
                     + "&text=" + encodedText;
+
+            if (threadId != null && !threadId.isEmpty()) {
+                url += "&message_thread_id=" + threadId;
+            }
 
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
