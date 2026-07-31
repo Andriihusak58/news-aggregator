@@ -17,11 +17,6 @@ public class HelloController {
 
     }
 
-    @GetMapping("/hello")
-    public String hello() {
-        return "Привіт! Мій сервер працює.";
-    }
-
     @GetMapping("/test")
     public String test(){
 
@@ -33,7 +28,7 @@ public class HelloController {
     public String update(){
 
         newsService.updateNews();
-        return "Оновлення запущено! Перевір консоль.";
+        return "Оновлення запущено!";
     }
 
     @GetMapping("/api/news")

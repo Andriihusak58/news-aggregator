@@ -100,14 +100,14 @@ public class NewsDatabase {
     }
     public static void generateSummaries(Connection connection) throws SQLException{
 
-        String selectSql = "SELECT id, link FROM news WHERE summary IS NULL";
+        String selectSql = "SELECT id, title, link FROM news WHERE summary IS NULL";
         Statement statement = connection.createStatement();
         ResultSet rs = statement.executeQuery(selectSql);
 
         while (rs.next()){
 
             int id = rs.getInt("id");
-
+            String title = rs.getString("title");
             String url = rs.getString("link");
             String text = ArticleFetcher.fetchArticleText(url);
 
@@ -129,6 +129,10 @@ public class NewsDatabase {
             pstmt.executeUpdate();
 
             System.out.println("Саммарі для новини " + id + ": " + summary);
+
+            // Надсилаємо новину в Telegram
+            String telegramText = title + "\n\n" + summary + "\n\n" + url;
+            TelegramSender.sendMessage(telegramText);
 
         }
 

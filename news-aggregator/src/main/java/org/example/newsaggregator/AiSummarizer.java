@@ -75,9 +75,4 @@ public class AiSummarizer {
             return null;
         }
     }
-
-    public static void main(String[] args) {
-        String test = summarize("Die Spritpreise steigen wieder nach Ende des Tankrabatts.");
-        System.out.println("Саммарі: " + test);
-    }
 }
