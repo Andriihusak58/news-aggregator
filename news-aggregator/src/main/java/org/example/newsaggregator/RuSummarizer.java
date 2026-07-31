@@ -12,18 +12,22 @@ import java.net.http.HttpResponse;
 
 public class RuSummarizer {
 
-    public static String translate(String germanSummary) {
+    public static String translateTitle(String germanTitle) {
+        return translate(germanTitle);
+    }
+
+    public static String translate(String germanText) {
         try {
             String apiKey = System.getenv("ANTHROPIC_API_KEY");
 
             String prompt =
                     """
-                    Übersetze diese Nachrichtenzusammenfassung ins Russische.
+                    Übersetze diesen deutschen Text ins Russische.
                     Bleibe neutral, verändere keine Fakten, keine eigene Meinung hinzufügen.
-                    Gib nur den übersetzten Text zurück, ohne Erklärungen.
+                    Gib nur den übersetzten Text zurück, ohne Erklärungen oder Anführungszeichen.
 
                     Text:
-                    """ + germanSummary;
+                    """ + germanText;
 
             ObjectMapper mapper = new ObjectMapper();
 

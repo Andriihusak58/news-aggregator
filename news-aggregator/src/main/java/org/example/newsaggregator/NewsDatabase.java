@@ -134,8 +134,10 @@ public class NewsDatabase {
             TelegramSender.sendMessage(telegramText, System.getenv("TELEGRAM_CHAT_ID"), null);
 
             String ruSummary = RuSummarizer.translate(summary);
-            if (ruSummary != null) {
-                String telegramTextRu = "<a href=\"" + url + "\">" + title + "</a>\n\n" + ruSummary;
+            String ruTitle = RuSummarizer.translate(title);
+
+            if (ruSummary != null && ruTitle != null) {
+                String telegramTextRu = "<a href=\"" + url + "\">" + ruTitle + "</a>\n\n" + ruSummary;
                 TelegramSender.sendMessage(telegramTextRu, System.getenv("TELEGRAM_CHAT_ID_FRIENDS"), System.getenv("TELEGRAM_THREAD_ID_FRIENDS"));
             }
         }
