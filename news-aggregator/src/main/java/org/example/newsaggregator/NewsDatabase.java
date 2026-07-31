@@ -130,12 +130,12 @@ public class NewsDatabase {
 
             System.out.println("Саммарі для новини " + id + ": " + summary);
 
-            String telegramText = title + "\n\n" + summary + "\n\n" + url;
+            String telegramText = "<a href=\"" + url + "\">" + title + "</a>\n\n" + summary;
             TelegramSender.sendMessage(telegramText, System.getenv("TELEGRAM_CHAT_ID"), null);
 
             String ruSummary = RuSummarizer.translate(summary);
             if (ruSummary != null) {
-                String telegramTextRu = title + "\n\n" + ruSummary + "\n\n" + url;
+                String telegramTextRu = "<a href=\"" + url + "\">" + title + "</a>\n\n" + ruSummary;
                 TelegramSender.sendMessage(telegramTextRu, System.getenv("TELEGRAM_CHAT_ID_FRIENDS"), System.getenv("TELEGRAM_THREAD_ID_FRIENDS"));
             }
         }

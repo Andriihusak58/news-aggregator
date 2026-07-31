@@ -17,6 +17,7 @@ public class TelegramSender {
             String url = "https://api.telegram.org/bot" + token
                     + "/sendMessage?chat_id=" + chatId
                     + "&text=" + encodedText
+                    + "&parse_mode=HTML"
                     + "&disable_web_page_preview=true";
 
             if (threadId != null && !threadId.isEmpty()) {
