@@ -130,9 +130,14 @@ public class NewsDatabase {
 
             System.out.println("Саммарі для новини " + id + ": " + summary);
 
-            // Надсилаємо новину в Telegram
             String telegramText = title + "\n\n" + summary + "\n\n" + url;
-            TelegramSender.sendMessage(telegramText);
+            TelegramSender.sendMessage(telegramText, System.getenv("TELEGRAM_CHAT_ID"));
+
+            String ruSummary = RuSummarizer.translate(summary);
+            if (ruSummary != null) {
+                String telegramTextRu = title + "\n\n" + ruSummary + "\n\n" + url;
+                TelegramSender.sendMessage(telegramTextRu, System.getenv("TELEGRAM_CHAT_ID_RU"));
+            }
 
         }
 
