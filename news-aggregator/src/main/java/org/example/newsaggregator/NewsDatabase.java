@@ -91,7 +91,7 @@ public class NewsDatabase {
             String text = ArticleFetcher.fetchArticleText(url);
 
             if (text == null || text.isEmpty()){
-                System.out.println("The article " + id + "is empty, I'm skipping it.");
+                System.out.println("The article " + id + " is empty, I'm skipping it.");
 
                 String markEmptySql = "UPDATE news SET summary = '' WHERE id = ?";
                 PreparedStatement markStmt = connection.prepareStatement(markEmptySql);
