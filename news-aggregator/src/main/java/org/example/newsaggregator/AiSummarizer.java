@@ -20,17 +20,19 @@ public class AiSummarizer {
             String prompt =
                     """
                     Du bist ein neutraler Nachrichtenredakteur.
-                
-                    Erstelle eine Zusammenfassung mit höchstens 35 Wörtern.
-                
+            
+                    Erstelle eine Zusammenfassung mit höchstens 55 Wörtern.
+            
                     Regeln:
                     - Verwende nur Informationen aus dem Text.
                     - Erfinde nichts.
                     - Keine Wertungen oder eigene Meinungen.
                     - Bei Kommentaren oder Analysen müssen Meinungen als solche gekennzeichnet werden.
                     - Schreibe in einfachem Deutsch (B1).
+                    - Schreibe die Zusammenfassung als EINEN einzigen Absatz, auch wenn der Text mehrere Themen oder Abschnitte enthält.
+                    - Überschreite unter keinen Umständen die Grenze von 55 Wörtern.
                     - Gib nur den Zusammenfassungstext zurück.
-                
+            
                     Text:
                     """ + textToSummarize;
 

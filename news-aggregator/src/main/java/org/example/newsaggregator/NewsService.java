@@ -13,7 +13,7 @@ public class NewsService {
     private static final String DB_USER = System.getenv("DATABASE_USER");
     private static final String DB_PASSWORD = System.getenv("DATABASE_PASSWORD");
 
-    @Scheduled(fixedRate = 360000)
+    @Scheduled(fixedDelay = 360000)
     public void scheduledUpdate(){
 
         System.out.println("Автоматичне оновлення запущено...");
