@@ -40,11 +40,11 @@ public class NewsDatabase {
 
                 insertNews(connection, news);
             }
-            System.out.println("Новини записані в базу!");
+            System.out.println("News recorded in the database!");
 
             Statement countStmt = connection.createStatement();
             ResultSet rs = countStmt.executeQuery("SELECT COUNT(*) FROM news");
-            System.out.println("Всього записів у базі: " + rs.getInt(1));
+            System.out.println("Total records in the database: " + rs.getInt(1));
 
             generateSummaries(connection);
 
@@ -70,34 +70,13 @@ public class NewsDatabase {
             OffsetDateTime date = OffsetDateTime.parse(news.getPubDate(), DateTimeFormatter.RFC_1123_DATE_TIME);
             pstmt.setTimestamp(5, Timestamp.from(date.toInstant()));
         } catch (Exception e) {
-            System.out.println("Не вдалося розпарсити дату: " + news.getPubDate());
+            System.out.println("Failed to parse date: " + news.getPubDate());
             pstmt.setTimestamp(5, null);
         }
 
         pstmt.executeUpdate();
     }
 
-    public static List<NewsItem> getAllNews(Connection connection) throws SQLException {
-
-        List<NewsItem> newsList = new ArrayList<>();
-
-        String sql = "SELECT title, description, link,pub_date FROM news";
-        Statement statement = connection.createStatement();
-        ResultSet rs = statement.executeQuery(sql);
-
-        while (rs.next()){
-
-            String title = rs.getString("title");
-            String description = rs.getString("description");
-            String link = rs.getString("link");
-            String pubData = rs.getString("pub_date");
-
-            NewsItem news = new NewsItem(title, description, link, pubData);
-            newsList.add(news);
-
-        }
-        return newsList;
-    }
     public static void generateSummaries(Connection connection) throws SQLException{
 
         String selectSql = "SELECT id, title, link FROM news WHERE summary IS NULL";
@@ -112,13 +91,17 @@ public class NewsDatabase {
             String text = ArticleFetcher.fetchArticleText(url);
 
             if (text == null || text.isEmpty()){
+                System.out.println("The article " + id + "is empty, I'm skipping it.");
 
-                System.out.println("Стаття " + id + " порожня, пропускаю");
+                String markEmptySql = "UPDATE news SET summary = '' WHERE id = ?";
+                PreparedStatement markStmt = connection.prepareStatement(markEmptySql);
+                markStmt.setInt(1, id);
+                markStmt.executeUpdate();
+
                 continue;
-
             }
 
-            System.out.println("Довжина тексту: " + text.length());
+            System.out.println("Text length: " + text.length());
 
             String summary = AiSummarizer.summarize(text);
 
@@ -128,7 +111,7 @@ public class NewsDatabase {
             pstmt.setInt(2, id);
             pstmt.executeUpdate();
 
-            System.out.println("Саммарі для новини " + id + ": " + summary);
+            System.out.println("News stories " + id + ": " + summary);
 
             String telegramText = "<a href=\"" + url + "\">" + title + "</a>\n\n" + summary;
             TelegramSender.sendMessage(telegramText, System.getenv("TELEGRAM_CHAT_ID"), null);

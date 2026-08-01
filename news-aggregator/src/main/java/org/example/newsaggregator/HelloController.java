@@ -28,7 +28,7 @@ public class HelloController {
     public String update(){
 
         newsService.updateNews();
-        return "Оновлення запущено!";
+        return "Update started!";
     }
 
     @GetMapping("/api/news")

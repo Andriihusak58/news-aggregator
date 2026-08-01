@@ -33,11 +33,11 @@ public class TelegramSender {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() != 200) {
-                System.out.println("Telegram помилка: " + response.body());
+                System.out.println("Telegram error: " + response.body());
             }
 
         } catch (Exception e) {
-            System.out.println("Telegram помилка: " + e.getMessage());
+            System.out.println("Telegram error: " + e.getMessage());
         }
     }
 }

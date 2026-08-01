@@ -16,13 +16,13 @@ public class NewsService {
     @Scheduled(fixedDelay = 360000)
     public void scheduledUpdate(){
 
-        System.out.println("Автоматичне оновлення запущено...");
+        System.out.println("Automatic update started...");
         updateNews();
 
     }
 
     public String test(){
-        return "Сервіс працює!";
+        return "The service is working!";
     }
 
     public void updateNews(){
@@ -49,12 +49,12 @@ public class NewsService {
             for (NewsItem news : newsList){
                 NewsDatabase.insertNews(connection, news);
             }
-            System.out.println("Новини записані в базу!");
+            System.out.println("News recorded in the database!");
 
             NewsDatabase.generateSummaries(connection);
 
             connection.close();
-            System.out.println("Оновлення завершено!");
+            System.out.println("Update complete!");
 
         } catch (SQLException e) {
             System.out.println("Error SQL: " + e.getMessage());

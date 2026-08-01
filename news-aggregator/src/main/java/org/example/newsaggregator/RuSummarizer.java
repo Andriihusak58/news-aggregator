@@ -60,7 +60,7 @@ public class RuSummarizer {
             return root.get("content").get(0).get("text").asString();
 
         } catch (Exception e) {
-            System.out.println("RuSummarizer помилка: " + e.getMessage());
+            System.out.println("RuSummarizer error: " + e.getMessage());
             return null;
         }
     }

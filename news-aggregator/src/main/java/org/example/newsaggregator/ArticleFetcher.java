@@ -12,7 +12,7 @@ public class ArticleFetcher {
 
         String url = "https://www.tagesschau.de/wirtschaft/unternehmen/google-rekordstrafe-eu-100.html";
         String text = fetchArticleText(url);
-        System.out.println("Довжина тексту: " + text.length());
+        System.out.println("Text lenght: " + text.length());
         System.out.println("---");
         System.out.println(text);
 
